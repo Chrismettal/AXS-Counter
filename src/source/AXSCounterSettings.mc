@@ -56,20 +56,44 @@ const ACTION_TITLES = [
     $.Rez.Strings.SettingResetTitle
 ];
 
+//! @param actionId One of $.ACTION_*.
+function propertyKeyFor(actionId as Number) as String {
+    if (actionId == $.ACTION_INCREMENT) {
+        return $.PROP_INCREMENT;
+    }
+    if (actionId == $.ACTION_DECREMENT) {
+        return $.PROP_DECREMENT;
+    }
+    return $.PROP_RESET;
+}
+
 //! Root menu: one item per action; the sub-label shows the current binding.
 class AXSCounterSettingsMenu extends WatchUi.Menu2 {
     //! Constructor: builds the three action items with their current values.
     public function initialize() {
         Menu2.initialize({:title => $.Rez.Strings.AppName});
-        addItem(new WatchUi.MenuItem($.Rez.Strings.SettingIncrementTitle,
-                    labelFor(Properties.getValue($.PROP_INCREMENT)),
-                    $.ACTION_INCREMENT, null));
-        addItem(new WatchUi.MenuItem($.Rez.Strings.SettingDecrementTitle,
-                    labelFor(Properties.getValue($.PROP_DECREMENT)),
-                    $.ACTION_DECREMENT, null));
-        addItem(new WatchUi.MenuItem($.Rez.Strings.SettingResetTitle,
-                    labelFor(Properties.getValue($.PROP_RESET)),
-                    $.ACTION_RESET, null));
+        addItem(newItem($.ACTION_INCREMENT));
+        addItem(newItem($.ACTION_DECREMENT));
+        addItem(newItem($.ACTION_RESET));
+    }
+
+    //! Refresh one action's sub-label in place after its binding changed, so
+    //! the root menu shows the new value as soon as the submenu pops (the
+    //! labels are otherwise only computed at construction time).
+    //! @param actionId One of $.ACTION_*.
+    public function refreshLabel(actionId as Number) as Void {
+        var index = findItemById(actionId);
+        if (index >= 0) {
+            updateItem(newItem(actionId), index);
+        }
+    }
+
+    //! Build the menu item for one action with its current binding as sub-label.
+    //! @param actionId One of $.ACTION_*.
+    private function newItem(actionId as Number) as MenuItem {
+        return new WatchUi.MenuItem($.ACTION_TITLES[actionId - 1],
+                    labelFor(Properties.getValue($.propertyKeyFor(actionId))),
+                    actionId, null);
     }
 
     //! @param value The raw property value (a Number, or null if unset).
@@ -87,11 +111,14 @@ class AXSCounterSettingsMenu extends WatchUi.Menu2 {
 
 //! Pushes the binding submenu for the selected action.
 class AXSCounterSettingsMenuDelegate extends WatchUi.Menu2InputDelegate {
+    private var _rootMenu as AXSCounterSettingsMenu;
     private var _listener as AXSButtonListener?;
 
+    //! @param rootMenu The root menu whose sub-labels must be refreshed.
     //! @param listener The running counter listener (null if the app is not started).
-    public function initialize(listener as AXSButtonListener?) {
+    public function initialize(rootMenu as AXSCounterSettingsMenu, listener as AXSButtonListener?) {
         Menu2InputDelegate.initialize();
+        _rootMenu = rootMenu;
         _listener = listener;
     }
 
@@ -99,7 +126,7 @@ class AXSCounterSettingsMenuDelegate extends WatchUi.Menu2InputDelegate {
     public function onSelect(item as MenuItem) as Void {
         var actionId = item.getId() as Number;
         var menu = new AXSCounterBindingMenu(actionId);
-        WatchUi.pushView(menu, new AXSCounterBindingMenuDelegate(actionId, _listener),
+        WatchUi.pushView(menu, new AXSCounterBindingMenuDelegate(actionId, _rootMenu, _listener),
                          WatchUi.SLIDE_IMMEDIATE);
     }
 }
@@ -115,40 +142,37 @@ class AXSCounterBindingMenu extends WatchUi.Menu2 {
     }
 }
 
-//! Stores the chosen binding and reloads the listener.
+//! Stores the chosen binding, reloads the listener, and refreshes the root
+//! menu's sub-label.
 class AXSCounterBindingMenuDelegate extends WatchUi.Menu2InputDelegate {
     private var _actionId as Number;
+    private var _rootMenu as AXSCounterSettingsMenu;
     private var _listener as AXSButtonListener?;
 
     //! @param actionId One of $.ACTION_*.
+    //! @param rootMenu The root menu whose sub-label must be refreshed.
     //! @param listener The running counter listener (null if the app is not started).
-    public function initialize(actionId as Number, listener as AXSButtonListener?) {
+    public function initialize(actionId as Number, rootMenu as AXSCounterSettingsMenu, listener as AXSButtonListener?) {
         Menu2InputDelegate.initialize();
         _actionId = actionId;
+        _rootMenu = rootMenu;
         _listener = listener;
     }
 
     //! @param item The selected binding option (id = binding value).
     public function onSelect(item as MenuItem) as Void {
         var value = item.getId() as Number;
-        var key = propertyKeyFor(_actionId);
+        var key = $.propertyKeyFor(_actionId);
         Properties.setValue(key, value);
         System.println("AXSButton: setting " + key + " = " + value);
         if (_listener != null) {
             _listener.onSettingsChanged();
         }
+        // Refresh the root menu's sub-label in place so the new binding is
+        // visible the moment the submenu pops (the labels are otherwise only
+        // computed when the root menu is constructed).
+        _rootMenu.refreshLabel(_actionId);
         // Back to the root menu; the user leaves the settings with Back.
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    //! @param actionId One of $.ACTION_*.
-    private function propertyKeyFor(actionId as Number) as String {
-        if (actionId == $.ACTION_INCREMENT) {
-            return $.PROP_INCREMENT;
-        }
-        if (actionId == $.ACTION_DECREMENT) {
-            return $.PROP_DECREMENT;
-        }
-        return $.PROP_RESET;
     }
 }

@@ -65,6 +65,7 @@ class AXSCounterApp extends Application.AppBase {
     //! the root menu (action list) rather than a placeholder view.
     //! @return Array [View, Delegate].
     public function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
-        return [new AXSCounterSettingsMenu(), new AXSCounterSettingsMenuDelegate(_listener)];
+        var menu = new AXSCounterSettingsMenu();
+        return [menu, new AXSCounterSettingsMenuDelegate(menu, _listener)];
     }
 }
