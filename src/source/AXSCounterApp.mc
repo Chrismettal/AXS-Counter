@@ -54,4 +54,17 @@ class AXSCounterApp extends Application.AppBase {
     public function getInitialView() as [Views] or [Views, InputDelegates] {
         return [_field];
     }
+
+    //! Return the on-device settings view. The framework offers this when the
+    //! field is added to a data page, and it stays reachable from the data page
+    //! menu ("ConnectIQ Fields" entry, swipe up on the Edge). Works with
+    //! sideloaded apps, unlike the phone settings dialog (which requires the
+    //! Connect IQ App Store).
+    //!
+    //! The Edge 1050 has no Menu button, so the settings open directly into
+    //! the root menu (action list) rather than a placeholder view.
+    //! @return Array [View, Delegate].
+    public function getSettingsView() as [Views] or [Views, InputDelegates] or Null {
+        return [new AXSCounterSettingsMenu(), new AXSCounterSettingsMenuDelegate(_listener)];
+    }
 }

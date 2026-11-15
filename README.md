@@ -47,7 +47,7 @@ Requirements:
 
 ## Settings
 
-Open the app's settings in the **Garmin Connect** app (phone) → *AXS-Counter*. Three actions can each be bound to one button combination, or left *Unassigned*:
+Each of the three actions can be bound to one button combination, or left *Unassigned*:
 
 | Setting | Action |
 |---|---|
@@ -56,6 +56,18 @@ Open the app's settings in the **Garmin Connect** app (phone) → *AXS-Counter*.
 | **Reset** | counter → 0 (default: Unassigned) |
 
 Each option is one of 16 combinations: Function Set 1–8 × short/long press. Changes take effect immediately while the field is running (no restart needed). If two actions are bound to the same combination, the priority is Increment > Decrement > Reset.
+
+### How to open the settings
+
+On the Edge, the settings are **on-device** (data fields cannot push other UI, but the framework offers this one view). Open them from the data page:
+
+1. On a data page that shows the **Counter** field, **swipe up** to open the page menu.
+2. Select **ConnectIQ Fields** → **AXS-Counter**.
+3. The root menu lists *Increment*, *Decrement* and *Reset*, each showing its current binding. Select one to open its 17-option submenu (Unassigned + FS 1–8 × short/long). Pick an option and it is saved and applied immediately; **Back** returns to the root menu.
+
+The same prompt also appears when you first **add** the field to a data page ("Configure this field?").
+
+> **Note on the phone dialog:** the `properties.xml` settings (the same three values) are also defined so that, if the app is installed from the **Connect IQ App Store** (e.g. as a beta app), the standard **Garmin Connect** phone settings dialog appears. Sideloaded `.prg` files do *not* get the phone settings button — the on-device menu above is the path that works with sideloading.
 
 ## Build
 

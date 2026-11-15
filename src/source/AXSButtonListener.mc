@@ -42,6 +42,13 @@ import Toybox.WatchUi;
 //! firmware raises "Permission Required" at runtime), so the stale check is
 //! driven from the data field's `compute()` instead. `System.getTimer()` is
 //! allowed and is used for the timestamp.
+//! Property keys (see properties.xml). Module scope so both this listener and
+//! the on-device settings view (AXSCounterSettings.mc) reference the same
+//! property names; accessed cross-file as $.PROP_*.
+const PROP_INCREMENT = "actionIncrement";
+const PROP_DECREMENT = "actionDecrement";
+const PROP_RESET = "actionReset";
+
 class AXSButtonListener extends AntPlus.ShiftingListener {
     //! Button data page number on the Shifting profile.
     private const BUTTON_PAGE = 2;
@@ -49,10 +56,6 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
     private const LONG_PRESS_FLAG = 0x20;
     //! Frames older than this mean the shifter is no longer broadcasting.
     private const STALE_MS = 5000;
-    //! Property keys (see properties.xml).
-    private const PROP_INCREMENT = "actionIncrement";
-    private const PROP_DECREMENT = "actionDecrement";
-    private const PROP_RESET = "actionReset";
     //! Binding values: 0 = unassigned, 1-8 = FS 1-8 short press,
     //! 9-16 = FS 1-8 long press (functionSet + 8).
     private const BINDING_UNASSIGNED = 0;
@@ -80,9 +83,9 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
 
     //! Load the action bindings from the app properties.
     private function loadBindings() as Void {
-        _incrementBinding = Properties.getValue(PROP_INCREMENT) as Number;
-        _decrementBinding = Properties.getValue(PROP_DECREMENT) as Number;
-        _resetBinding = Properties.getValue(PROP_RESET) as Number;
+        _incrementBinding = Properties.getValue($.PROP_INCREMENT) as Number;
+        _decrementBinding = Properties.getValue($.PROP_DECREMENT) as Number;
+        _resetBinding = Properties.getValue($.PROP_RESET) as Number;
         System.println("AXSButton: bindings inc=" + _incrementBinding +
                        " dec=" + _decrementBinding + " rst=" + _resetBinding);
     }
