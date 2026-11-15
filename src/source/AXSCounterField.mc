@@ -6,8 +6,8 @@ import Toybox.WatchUi;
 //! indicator (green = receiving, red = no lock).
 class AXSCounterField extends WatchUi.DataField {
     private const PAD = 2;
-    private const LABEL_STRING = "AXS CNT";
-    private const LABEL_FONT = Graphics.FONT_XTINY;
+    private const LABEL_STRING = "Counter";
+    private const LABEL_FONT = Graphics.FONT_TINY;
     private const NUMBER_FONT = Graphics.FONT_NUMBER_HOT;
     private const DOT_RADIUS = 3;
 
@@ -29,7 +29,7 @@ class AXSCounterField extends WatchUi.DataField {
     }
 
     //! Set the connection indicator.
-    //! @param connected True when the shifting channel is tracking.
+    //! @param connected True while page-2 frames are actually arriving.
     public function setConnected(connected as Boolean) as Void {
         _connected = connected;
         WatchUi.requestUpdate();

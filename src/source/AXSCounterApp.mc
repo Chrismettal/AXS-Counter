@@ -4,7 +4,7 @@ import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
 
-//! App entry point for the Überholzähler bonus-button counter data field.
+//! App entry point for the AXS-Counter bonus-button counter data field.
 //!
 //! Taps the Edge's native ANT+ Shifting channel (the one already paired to the
 //! SRAM drivetrain) via an AntPlus.Shifting device + ShiftingListener. No raw
@@ -36,6 +36,9 @@ class AXSCounterApp extends Application.AppBase {
     //! Handle app shutdown: detach the listener and release the device.
     //! @param state Shutdown arguments.
     public function onStop(state as Dictionary?) as Void {
+        if (_listener != null) {
+            _listener.shutdown();
+        }
         _shifting = null;
         _listener = null;
     }
