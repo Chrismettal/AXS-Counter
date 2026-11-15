@@ -2,7 +2,6 @@ import Toybox.Ant;
 import Toybox.AntPlus;
 import Toybox.Lang;
 import Toybox.System;
-import Toybox.Timer;
 import Toybox.WatchUi;
 
 //! Listener that taps the Edge's native ANT+ Shifting channel and decodes the
@@ -25,11 +24,16 @@ import Toybox.WatchUi;
 //! byte 2. This is verified on-device (see maca88/SmartBikeLights#123).
 //!
 //! The connect dot is driven by *actual frame reception*: any page-2 frame
-//! turns it green, and a watchdog turns it red again when frames stop
-//! arriving (SRAM asleep / out of range / channel lost). The AntPlus device
-//! state is deliberately *not* used for this: DEVICE_STATE_TRACKING only
-//! becomes true while an activity records, even though frames arrive while
-//! idle too.
+//! turns it green, and the field's once-per-second `compute()` hook calls
+//! `tick()` to turn it red again when frames stop arriving (SRAM asleep /
+//! out of range / channel lost). The AntPlus device state is deliberately
+//! *not* used for this: DEVICE_STATE_TRACKING only becomes true while an
+//! activity records, even though frames arrive while idle too.
+//!
+//! NOTE: `Toybox.Timer` is NOT available to `type="datafield"` apps (the
+//! firmware raises "Permission Required" at runtime), so the stale check is
+//! driven from the data field's `compute()` instead. `System.getTimer()` is
+//! allowed and is used for the timestamp.
 class AXSButtonListener extends AntPlus.ShiftingListener {
     //! Button data page number on the Shifting profile.
     private const BUTTON_PAGE = 2;
@@ -39,8 +43,6 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
     private const FUNCTION_SET_BOTH = 3;
     //! Long-press flag (bit 5 of the event byte).
     private const LONG_PRESS_FLAG = 0x20;
-    //! Watchdog tick period in ms.
-    private const TICK_MS = 1000;
     //! Frames older than this mean the shifter is no longer broadcasting.
     private const STALE_MS = 5000;
 
@@ -51,15 +53,12 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
     private var _lastFrameMs as Number = 0;
     //! True while page-2 frames are arriving (drives the green/red dot).
     private var _connected as Boolean = false;
-    private var _timer as Timer.Timer;
 
     //! Constructor.
     //! @param field The data field that receives counter deltas and connection state.
     public function initialize(field as AXSCounterField) {
         ShiftingListener.initialize();
         _field = field;
-        _timer = new Timer.Timer();
-        _timer.start(method(:onTick), TICK_MS, true);
     }
 
     //! Raw ANT frame handler.
@@ -100,13 +99,9 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
         }
     }
 
-    //! Stop the watchdog timer. Called by the app on shutdown.
-    public function shutdown() as Void {
-        _timer.stop();
-    }
-
-    //! Watchdog tick: red dot when page-2 frames stopped arriving.
-    public function onTick() as Void {
+    //! Stale check, called once per second by the field's `compute()`.
+    //! Turns the dot red when page-2 frames stopped arriving.
+    public function tick() as Void {
         if (_connected && (System.getTimer() - _lastFrameMs > STALE_MS)) {
             _connected = false;
             _field.setConnected(false);

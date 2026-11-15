@@ -1,3 +1,4 @@
+import Toybox.Activity;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
@@ -13,12 +14,20 @@ class AXSCounterField extends WatchUi.DataField {
 
     private var _counter as Number = 0;
     private var _connected as Boolean = false;
+    private var _listener as AXSButtonListener?;
 
     //! Constructor.
     public function initialize() {
         DataField.initialize();
         _counter = 0;
         _connected = false;
+        _listener = null;
+    }
+
+    //! Attach the listener that drives the counter and the connect dot.
+    //! @param listener The listener that receives ANT+ shifting frames.
+    public function setListener(listener as AXSButtonListener) as Void {
+        _listener = listener;
     }
 
     //! Apply a counter delta from the listener.
@@ -33,6 +42,16 @@ class AXSCounterField extends WatchUi.DataField {
     public function setConnected(connected as Boolean) as Void {
         _connected = connected;
         WatchUi.requestUpdate();
+    }
+
+    //! Called by the framework once per second while the app runs.
+    //! Drives the listener's stale-frame check (red dot when the shifter
+    //! stops broadcasting).
+    //! @param info The current activity info (unused).
+    public function compute(info as Activity.Info) as Void {
+        if (_listener != null) {
+            _listener.tick();
+        }
     }
 
     //! Draw the field.

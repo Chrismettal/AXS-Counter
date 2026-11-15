@@ -29,6 +29,7 @@ class AXSCounterApp extends Application.AppBase {
     //! @param state Startup arguments.
     public function onStart(state as Dictionary?) as Void {
         _listener = new AXSButtonListener(_field);
+        _field.setListener(_listener);
         _shifting = new AntPlus.Shifting(_listener);
         System.println("AXSCounterApp: shifting listener attached");
     }
@@ -36,9 +37,6 @@ class AXSCounterApp extends Application.AppBase {
     //! Handle app shutdown: detach the listener and release the device.
     //! @param state Shutdown arguments.
     public function onStop(state as Dictionary?) as Void {
-        if (_listener != null) {
-            _listener.shutdown();
-        }
         _shifting = null;
         _listener = null;
     }
