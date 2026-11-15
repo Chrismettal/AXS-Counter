@@ -4,7 +4,9 @@
 [![Shop: Elecrow](https://img.shields.io/badge/shop-Elecrow-blue?style=flat-square)](https://www.elecrow.com/store/Binary-6)
 [![Donations: Coffee](https://img.shields.io/badge/donations-Coffee-brown?style=flat-square)](https://github.com/Chrismettal#donations)
 
-ConnectIQ **data field** for the **Garmin Edge 1050** that counts **SRAM Force AXS bonus-button** presses over **ANT+**.
+ConnectIQ data field for **Garmin Edge devices** that counts **SRAM Force AXS bonus-button** presses over `ANT+`.
+
+Used like these clicker counters to count arbitrary numbers during cycling. (How many peoples did I pass? How many turns did I have in the group ride?)
 
 **If you like my work please consider [supporting me](https://github.com/Chrismettal#donations)!**
 
