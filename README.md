@@ -15,7 +15,9 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 - [Concept](#concept)
 - [How it works](#how-it-works)
 - [Settings](#settings)
+  - [How to open the settings](#how-to-open-the-settings)
 - [Build](#build)
+- [AI Usage](#ai-usage)
 - [Donations](#donations)
 - [License](#license)
 
@@ -76,6 +78,10 @@ monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.d
 ```
 
 Sideload the resulting `.prg` to the Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
+
+## AI Usage
+
+This codebase was mostly meatproxied through `Qwen3.8-27B:Q4_K_XL` at `100k` context running on a `7900XTX` locally.
 
 ## Donations
 
