@@ -13,9 +13,17 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 ## Table of contents <!-- omit in toc -->
 
 - [Concept](#concept)
-- [How it works](#how-it-works)
+- [Installation](#installation)
+  - [Sideloading](#sideloading)
+  - [ConnectIQ Store](#connectiq-store)
 - [Settings](#settings)
+  - [Example Configuration](#example-configuration)
+    - [AXS App settings](#axs-app-settings)
+    - [Garmin Ant function 1](#garmin-ant-function-1)
+    - [Garmin Ant function 2](#garmin-ant-function-2)
+    - [Garmin Ant function 3](#garmin-ant-function-3)
 - [Build](#build)
+- [How it works](#how-it-works)
 - [AI Usage](#ai-usage)
 - [Donations](#donations)
 - [License](#license)
@@ -25,6 +33,71 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 A big number on a data page that changes when you press the SRAM bonus buttons. A dot in the corner shows the ANT+ link: **green** while the shifter is broadcasting, **red** when no frames are arriving (SRAM asleep, out of range, or channel lost).
 
 Each of the three actions — **Increment**, **Decrement** and **Reset** — can be bound to any of the bonus-button combinations (ANT+ Function Set 1–8 × short/long press), or left unassigned. Defaults: Increment = **FS 3 · short press** (both buttons), Decrement and Reset unassigned. No persistence — the counter resets to 0 when the field is restarted.
+
+## Installation
+
+### Sideloading
+
+Grab the latest release's `AXS-Counter.prg` file and place it into your Edge's `/Garmin/Apps` directory via USB.
+
+After unplugging the USB, the Edge will install the app and prompt you to use it.
+
+You'll find the datafield in the "ConnectIQ" category
+
+### ConnectIQ Store
+
+Not yet available
+
+## Settings
+
+Each of the three actions can be bound to one button combination, or left *Unassigned*:
+
+| Setting | Action |
+|---|---|
+| **Increment** | counter +1 (default: FS 3 · short press) |
+| **Decrement** | counter −1 (default: Unassigned) |
+| **Reset** | counter → 0 (default: Unassigned) |
+
+FS1 - FS16 correlate to the 16 ANT actions SRAM can send us. Along with that each ANT action can be either long or short press.
+
+Thus, if you set up your SRAM bonus button left to send the ANT 1 action, you can use "FS1 - Short" to increment the counter on short button press.
+
+This does NOT use the Edge's bonus button assignment since Garmin's Firmware doesn't let datafields hook into this. Instead this datafield just looks at the data coming in parallel to Garmin.
+
+This means you want to leave the buttons you want to use for this counter unassigned in Garmin's settings.
+
+### Example Configuration
+
+In this example configuration I use short press on both buttons to increment, with no option to decrement or reset.
+
+The Edge itself listents to left and right short presses for page swapping and holding of both for bell ringing.
+
+You could also double bind between the Edge and this datafield if you wanted to.
+
+#### AXS App settings
+
+![AXSAppSettings](/img/AXSApp.png)
+
+#### Garmin Ant function 1
+
+![ANT1](/img/Function1.BMP)
+
+#### Garmin Ant function 2
+
+![ANT2](/img/Function2.BMP)
+
+#### Garmin Ant function 3
+
+![ANT3](/img/Function3.BMP)
+
+## Build
+
+```
+monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o _gitignored/Builds/AXS-Counter.prg -w
+```
+
+Sideload the resulting `.prg` to the Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
+
 
 ## How it works
 
@@ -46,31 +119,6 @@ Requirements:
 - The Edge is already paired to the SRAM on its built-in shifting channel.
 - The SRAM is awake and the bonus buttons are mapped to ANT+ Function Sets in the SRAM AXS app (SRAM currently exposes FS 1–3; the settings allow binding any FS 1–8).
 
-## Settings
-
-Each of the three actions can be bound to one button combination, or left *Unassigned*:
-
-| Setting | Action |
-|---|---|
-| **Increment** | counter +1 (default: FS 3 · short press) |
-| **Decrement** | counter −1 (default: Unassigned) |
-| **Reset** | counter → 0 (default: Unassigned) |
-
-FS1 - FS16 correlate to the 16 ANT actions SRAM can send us. Along with that each ANT action can be either long or short press.
-
-Thus, if you set up your SRAM bonus button left to send the ANT 1 action, you can use "FS1 - Short" to increment the counter on short button press.
-
-This does NOT use the Edge's bonus button assignment since Garmin's Firmware doesn't let datafields hook into this. Instead this datafield just looks at the data coming in parallel to Garmin.
-
-This means you want to leave the buttons you want to use for this counter unassigned in Garmin's settings.
-
-## Build
-
-```
-monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o _gitignored/Builds/AXS-Counter.prg -w
-```
-
-Sideload the resulting `.prg` to the Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
 
 ## AI Usage
 
