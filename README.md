@@ -14,15 +14,16 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 
 - [Concept](#concept)
 - [How it works](#how-it-works)
+- [Settings](#settings)
 - [Build](#build)
 - [Donations](#donations)
 - [License](#license)
 
 ## Concept
 
-A big number on a data page that goes up by one every time you press **both** bonus buttons together. A dot in the corner shows the ANT+ link: **green** while the shifter is broadcasting, **red** when no frames are arriving (SRAM asleep, out of range, or channel lost).
+A big number on a data page that changes when you press the SRAM bonus buttons. A dot in the corner shows the ANT+ link: **green** while the shifter is broadcasting, **red** when no frames are arriving (SRAM asleep, out of range, or channel lost).
 
-Current scope: increment-only. Left/right buttons are reserved for a future ±1 mapping. No persistence, no settings screen.
+Each of the three actions — **Increment**, **Decrement** and **Reset** — can be bound to any of the bonus-button combinations (ANT+ Function Set 1–8 × short/long press), or left unassigned. Defaults: Increment = **FS 3 · short press** (both buttons), Decrement and Reset unassigned. No persistence — the counter resets to 0 when the field is restarted.
 
 ## How it works
 
@@ -42,7 +43,19 @@ The app taps the Edge's **native ANT+ Shifting channel** (`AntPlus.Shifting` + `
 Requirements:
 
 - The Edge is already paired to the SRAM on its built-in shifting channel.
-- The SRAM is awake and the bonus buttons are mapped to ANT+ Function Sets 1/2/3 in the SRAM AXS app.
+- The SRAM is awake and the bonus buttons are mapped to ANT+ Function Sets in the SRAM AXS app (SRAM currently exposes FS 1–3; the settings allow binding any FS 1–8).
+
+## Settings
+
+Open the app's settings in the **Garmin Connect** app (phone) → *AXS-Counter*. Three actions can each be bound to one button combination, or left *Unassigned*:
+
+| Setting | Action |
+|---|---|
+| **Increment** | counter +1 (default: FS 3 · short press) |
+| **Decrement** | counter −1 (default: Unassigned) |
+| **Reset** | counter → 0 (default: Unassigned) |
+
+Each option is one of 16 combinations: Function Set 1–8 × short/long press. Changes take effect immediately while the field is running (no restart needed). If two actions are bound to the same combination, the priority is Increment > Decrement > Reset.
 
 ## Build
 

@@ -41,6 +41,14 @@ class AXSCounterApp extends Application.AppBase {
         _listener = null;
     }
 
+    //! Called when the user changes the app settings from the phone while the
+    //! field is running. Reloads the action bindings in the listener.
+    public function onSettingsChanged() as Void {
+        if (_listener != null) {
+            _listener.onSettingsChanged();
+        }
+    }
+
     //! Return the initial view for the app.
     //! @return Array [View].
     public function getInitialView() as [Views] or [Views, InputDelegates] {

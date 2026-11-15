@@ -38,6 +38,12 @@ class AXSCounterField extends WatchUi.DataField {
         WatchUi.requestUpdate();
     }
 
+    //! Reset the counter to zero (bound to the "Reset" action in settings).
+    public function resetCounter() as Void {
+        _counter = 0;
+        WatchUi.requestUpdate();
+    }
+
     //! Set the connection indicator.
     //! @param connected True while page-2 frames are actually arriving.
     public function setConnected(connected as Boolean) as Void {

@@ -1,3 +1,27 @@
 <resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <string id="AppName">AXS-Counter</string>
+
+    <!-- Settings: action titles -->
+    <string id="SettingIncrementTitle">Increment</string>
+    <string id="SettingDecrementTitle">Decrement</string>
+    <string id="SettingResetTitle">Reset</string>
+
+    <!-- Settings: option labels -->
+    <string id="SettingUnassigned">Unassigned</string>
+    <string id="SettingFS1Short">FS 1 · short press</string>
+    <string id="SettingFS1Long">FS 1 · long press</string>
+    <string id="SettingFS2Short">FS 2 · short press</string>
+    <string id="SettingFS2Long">FS 2 · long press</string>
+    <string id="SettingFS3Short">FS 3 · short press</string>
+    <string id="SettingFS3Long">FS 3 · long press</string>
+    <string id="SettingFS4Short">FS 4 · short press</string>
+    <string id="SettingFS4Long">FS 4 · long press</string>
+    <string id="SettingFS5Short">FS 5 · short press</string>
+    <string id="SettingFS5Long">FS 5 · long press</string>
+    <string id="SettingFS6Short">FS 6 · short press</string>
+    <string id="SettingFS6Long">FS 6 · long press</string>
+    <string id="SettingFS7Short">FS 7 · short press</string>
+    <string id="SettingFS7Long">FS 7 · long press</string>
+    <string id="SettingFS8Short">FS 8 · short press</string>
+    <string id="SettingFS8Long">FS 8 · long press</string>
 </resources>

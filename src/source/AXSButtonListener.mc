@@ -1,5 +1,6 @@
 import Toybox.Ant;
 import Toybox.AntPlus;
+import Toybox.Application;
 import Toybox.Lang;
 import Toybox.System;
 import Toybox.WatchUi;
@@ -23,6 +24,13 @@ import Toybox.WatchUi;
 //! A new press is detected by the counter changing; the newest event is then
 //! byte 2. This is verified on-device (see maca88/SmartBikeLights#123).
 //!
+//! **Action bindings** are user-configurable from the phone (Garmin Connect
+//! app settings): each of the actions *increment*, *decrement* and *reset* is
+//! bound to one of the 16 function-set/press-type combinations, or unassigned.
+//! The bindings are stored as app properties (see properties.xml) and reloaded
+//! in `onSettingsChanged()`, so changes from the phone take effect immediately
+//! while the field is running.
+//!
 //! The connect dot is driven by *actual frame reception*: any page-2 frame
 //! turns it green, and the field's once-per-second `compute()` hook calls
 //! `tick()` to turn it red again when frames stop arriving (SRAM asleep /
@@ -37,14 +45,18 @@ import Toybox.WatchUi;
 class AXSButtonListener extends AntPlus.ShiftingListener {
     //! Button data page number on the Shifting profile.
     private const BUTTON_PAGE = 2;
-    //! Function-set values (lower 5 bits of the event byte).
-    private const FUNCTION_SET_LEFT = 1;
-    private const FUNCTION_SET_RIGHT = 2;
-    private const FUNCTION_SET_BOTH = 3;
     //! Long-press flag (bit 5 of the event byte).
     private const LONG_PRESS_FLAG = 0x20;
     //! Frames older than this mean the shifter is no longer broadcasting.
     private const STALE_MS = 5000;
+    //! Property keys (see properties.xml).
+    private const PROP_INCREMENT = "actionIncrement";
+    private const PROP_DECREMENT = "actionDecrement";
+    private const PROP_RESET = "actionReset";
+    //! Binding values: 0 = unassigned, 1-8 = FS 1-8 short press,
+    //! 9-16 = FS 1-8 long press (functionSet + 8).
+    private const BINDING_UNASSIGNED = 0;
+    private const LONG_PRESS_OFFSET = 8;
 
     private var _field as AXSCounterField;
     //! Last observed event counter; -1 until the first page-2 frame arrives.
@@ -53,12 +65,32 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
     private var _lastFrameMs as Number = 0;
     //! True while page-2 frames are arriving (drives the green/red dot).
     private var _connected as Boolean = false;
+    //! Configured bindings (see properties.xml).
+    private var _incrementBinding as Number = BINDING_UNASSIGNED;
+    private var _decrementBinding as Number = BINDING_UNASSIGNED;
+    private var _resetBinding as Number = BINDING_UNASSIGNED;
 
     //! Constructor.
     //! @param field The data field that receives counter deltas and connection state.
     public function initialize(field as AXSCounterField) {
         ShiftingListener.initialize();
         _field = field;
+        loadBindings();
+    }
+
+    //! Load the action bindings from the app properties.
+    private function loadBindings() as Void {
+        _incrementBinding = Properties.getValue(PROP_INCREMENT) as Number;
+        _decrementBinding = Properties.getValue(PROP_DECREMENT) as Number;
+        _resetBinding = Properties.getValue(PROP_RESET) as Number;
+        System.println("AXSButton: bindings inc=" + _incrementBinding +
+                       " dec=" + _decrementBinding + " rst=" + _resetBinding);
+    }
+
+    //! Called by the app when the user changes the settings from the phone.
+    //! Reloads the bindings so they take effect immediately.
+    public function onSettingsChanged() as Void {
+        loadBindings();
     }
 
     //! Raw ANT frame handler.
@@ -92,10 +124,32 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
         var eventByte = payload[2];
         var functionSet = eventByte & 0x1F;
         var longPress = (eventByte & LONG_PRESS_FLAG) != 0;
-        var delta = deltaFor(functionSet, longPress);
-        System.println("AXSButton: fn=" + functionSet + " long=" + longPress + " delta=" + delta);
-        if (delta != 0) {
-            _field.applyDelta(delta);
+        handleEvent(functionSet, longPress);
+    }
+
+    //! Map a decoded function-set event to the configured action and apply it.
+    //!
+    //! The event is converted to a binding value and compared against the
+    //! three configured bindings. If several actions are bound to the same
+    //! combination (user error), the priority is
+    //! increment > decrement > reset.
+    //! @param functionSet The decoded function set (1-8).
+    //! @param longPress True for a long press, false for a single press.
+    private function handleEvent(functionSet as Number, longPress as Boolean) as Void {
+        // Ignore invalid function sets (0 or > 8): a binding value of 0 means
+        // "unassigned" and must never match a real event.
+        if ((functionSet < 1) || (functionSet > 8)) {
+            return;
+        }
+        var binding = functionSet + (longPress ? LONG_PRESS_OFFSET : 0);
+        System.println("AXSButton: fn=" + functionSet + " long=" + longPress +
+                       " binding=" + binding);
+        if (binding == _incrementBinding) {
+            _field.applyDelta(1);
+        } else if (binding == _decrementBinding) {
+            _field.applyDelta(-1);
+        } else if (binding == _resetBinding) {
+            _field.resetCounter();
         }
     }
 
@@ -106,20 +160,5 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
             _connected = false;
             _field.setConnected(false);
         }
-    }
-
-    //! Map a decoded function-set event to a counter delta.
-    //!
-    //! Both-buttons (FS3): short press -> +1, long press -> ignored (reserved
-    //! for a future -1). Left (FS1) and right (FS2) are reserved so +/-
-    //! support can be added without touching the frame decoding above.
-    //! @param functionSet The decoded function set (1, 2 or 3).
-    //! @param longPress True for a long press, false for a single press.
-    //! @return The counter delta to apply (0 = ignore).
-    private function deltaFor(functionSet as Number, longPress as Boolean) as Number {
-        if ((functionSet == FUNCTION_SET_BOTH) && !longPress) {
-            return 1;
-        }
-        return 0;
     }
 }
