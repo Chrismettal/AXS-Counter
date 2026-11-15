@@ -14,6 +14,7 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 
 - [Concept](#concept)
 - [How it works](#how-it-works)
+- [Recording to the activity](#recording-to-the-activity)
 - [Settings](#settings)
   - [How to open the settings](#how-to-open-the-settings)
 - [Build](#build)
@@ -46,6 +47,17 @@ Requirements:
 
 - The Edge is already paired to the SRAM on its built-in shifting channel.
 - The SRAM is awake and the bonus buttons are mapped to ANT+ Function Sets in the SRAM AXS app (SRAM currently exposes FS 1–3; the settings allow binding any FS 1–8).
+
+## Recording to the activity
+
+While an activity is recording, the counter is written into the activity's `.fit` file as [developer data](https://developer.garmin.com/connect-iq/core-topics/activity-recording/) (`Toybox.FitContributor`):
+
+- **Per-second timeline** (record messages) → appears as a chart on the activity details page in Garmin Connect.
+- **Final value** (session message) → appears in the activity summary.
+
+The field must be on a visible data page during the ride for the timeline to be sampled.
+
+> **Note:** the data is written to the `.fit` file regardless of how the app was installed, but **Garmin Connect only renders developer data for apps installed from the Connect IQ App Store** (a beta install qualifies). Sideloaded builds record the data, but Connect has no display metadata for it — inspect the `.fit` directly (e.g. [fitfileviewer.com](https://www.fitfileviewer.com/)) to verify. The same restriction applies to the phone settings dialog.
 
 ## Settings
 
