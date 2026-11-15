@@ -6,11 +6,12 @@ import Toybox.WatchUi;
 //! Data field that renders the live bonus-button counter and a connect
 //! indicator (green = receiving, red = no lock).
 class AXSCounterField extends WatchUi.DataField {
-    private const PAD = 2;
+    private const DOT_RADIUS = 6;
+    //! Inset of the dot from the top/right edges of the field.
+    private const DOT_PAD = 6;
     private const LABEL_STRING = "Counter";
     private const LABEL_FONT = Graphics.FONT_TINY;
     private const NUMBER_FONT = Graphics.FONT_NUMBER_HOT;
-    private const DOT_RADIUS = 3;
 
     private var _counter as Number = 0;
     private var _connected as Boolean = false;
@@ -78,8 +79,8 @@ class AXSCounterField extends WatchUi.DataField {
 
         // Connect indicator dot in the top-right corner.
         var dotColor = _connected ? Graphics.COLOR_GREEN : Graphics.COLOR_RED;
-        var dotX = width - PAD - DOT_RADIUS;
-        var dotY = PAD + DOT_RADIUS;
+        var dotX = width - DOT_PAD - DOT_RADIUS;
+        var dotY = DOT_PAD + DOT_RADIUS;
         dc.setColor(dotColor, dotColor);
         dc.fillCircle(dotX, dotY, DOT_RADIUS);
     }
