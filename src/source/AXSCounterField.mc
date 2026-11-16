@@ -16,8 +16,12 @@ class AXSCounterField extends WatchUi.DataField {
     private const DOT_RADIUS = 6;
     //! Inset of the dot from the top/right edges of the field.
     private const DOT_PAD = 6;
-    private const LABEL_STRING = "Counter";
-    private const LABEL_FONT = Graphics.FONT_TINY;
+    private const LABEL_STRING = "COUNTER";
+    //! Top padding of the label, matching the native data fields (the
+    //! "GRADE" label sits 22 px below the top of its 158 px cell).
+    private const LABEL_TOP_PAD = 22;
+    //! Cap height of the custom label font (Roboto Regular, em 31).
+    private const LABEL_CAP = 22;
     private const NUMBER_FONT = Graphics.FONT_NUMBER_HOT;
     //! FIT developer-data field ids; must match the fitField ids in the
     //! <fitContributions> block of strings.xml.
@@ -29,6 +33,9 @@ class AXSCounterField extends WatchUi.DataField {
     private var _counter as Number = 0;
     private var _connected as Boolean = false;
     private var _listener as AXSButtonListener?;
+    //! Custom bitmap font for the label (Roboto Regular, cap 22 px),
+    //! matched to the native data-field labels.
+    private var _labelFont as FontResource?;
     //! FIT developer-data fields: the counter timeline (record messages →
     //! chart) and the final counter value (session message → summary).
     private var _recordField as FitContributor.Field;
@@ -40,6 +47,7 @@ class AXSCounterField extends WatchUi.DataField {
         _counter = 0;
         _connected = false;
         _listener = null;
+        _labelFont = WatchUi.loadResource($.Rez.Fonts.id_font_label) as FontResource;
         // Create the FIT developer-data fields. The framework ties them to
         // the active recording session; values are only written while an
         // activity records.
@@ -104,22 +112,28 @@ class AXSCounterField extends WatchUi.DataField {
     //! Draw the field.
     //! @param dc Device context.
     public function onUpdate(dc as Dc) as Void {
-        var bg = getBackgroundColor();
-        var fg = (bg == Graphics.COLOR_WHITE) ? Graphics.COLOR_BLACK : Graphics.COLOR_WHITE;
-
-        dc.setColor(fg, bg);
+        // The field background must be transparent so the page background
+        // (a dark teal, not black) shows through, matching the native
+        // data fields. The label and number are drawn in white.
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         dc.clear();
-        dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
 
         var width = dc.getWidth();
         var height = dc.getHeight();
 
-        // Field label.
-        dc.drawText(width / 2, 0, LABEL_FONT, LABEL_STRING, Graphics.TEXT_JUSTIFY_CENTER);
+        // Field label: all caps, custom Roboto bitmap font (cap 22 px),
+        // with the same top padding as the native labels.
+        if (_labelFont != null) {
+            dc.drawText(width / 2, LABEL_TOP_PAD, _labelFont, LABEL_STRING,
+                        Graphics.TEXT_JUSTIFY_CENTER);
+        } else {
+            dc.drawText(width / 2, LABEL_TOP_PAD, Graphics.FONT_TINY, LABEL_STRING,
+                        Graphics.TEXT_JUSTIFY_CENTER);
+        }
 
         // Big counter, vertically centered below the label.
         var numberText = _counter.toString();
-        var numberY = (Graphics.getFontAscent(LABEL_FONT) + height) / 2;
+        var numberY = (LABEL_TOP_PAD + LABEL_CAP + height) / 2;
         dc.drawText(width / 2, numberY, NUMBER_FONT, numberText,
                     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 

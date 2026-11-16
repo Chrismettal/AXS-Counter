@@ -1,0 +1,8 @@
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <fonts>
+        <!-- Roboto Regular at cap height 22 px, matched to the native
+             data-field labels (all caps, 22 px cap, 22 px top padding).
+             Atlas: 256x128, white-on-black, anti-aliased. -->
+        <font id="id_font_label" filename="fonts/roboto_label.fnt" antialias="true" />
+    </fonts>
+</resources>
