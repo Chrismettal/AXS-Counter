@@ -40,7 +40,7 @@ Each of the three actions - **Increment**, **Decrement** and **Reset** - can be 
 
 ### Sideloading
 
-1. Download the `.prg` matching your device from the latest release. There is one file per device (Garmin requires sideloads to be built for the exact device):
+1. Download the `.prg` matching your device from the [latest release](../../releases). There is one file per device (Garmin requires sideloads to be built for the exact device):
 
 | Device    | File                       |
 | --------- | -------------------------- |
