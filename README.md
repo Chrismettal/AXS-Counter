@@ -23,7 +23,6 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
     - [Garmin Ant function 2](#garmin-ant-function-2)
     - [Garmin Ant function 3](#garmin-ant-function-3)
 - [Build](#build)
-- [Release](#release)
 - [How it works](#how-it-works)
 - [AI Usage](#ai-usage)
 - [Donations](#donations)
@@ -105,15 +104,29 @@ You could also double bind between the Edge and this datafield if you wanted to.
 
 ## Build
 
-Builds are done per device (one `.prg` per target; this is also how the release is packaged). Output goes to `build/`.
+Building from source lets you target your own device or make changes. You need:
+
+- Java 11 or later
+- A free [Garmin developer account](https://developer.garmin.com)
+- The [Connect IQ SDK Manager](https://developer.garmin.com/connect-iq/get-started/) with a downloaded SDK (9.x) — the SDK Manager also generates the personal signing key `developer_key.der` in your `~/.Garmin/ConnectIQ/` directory
+
+Then clone this repo and build for your device. One `.prg` is produced per device, into `build/`.
 
 ### Linux
+
+From the repo root:
 
 ```
 monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o build/AXS-Counter-edge1050.prg -w
 ```
 
-Replace `edge1050` with any of the supported device ids: `edge540`, `edge550`, `edge840`, `edge850`, `edge1040`, `edge1050`, `edge1060`.
+If `monkeyc` is not on your `PATH`, add the active SDK's `bin` directory:
+
+```
+export PATH=$PATH:$(cat ~/.Garmin/ConnectIQ/current-sdk.cfg)/bin
+```
+
+Replace `edge1050` with your device: `edge540`, `edge550`, `edge840`, `edge850`, `edge1040`, `edge1050`, `edge1060`.
 
 ### Windows
 
@@ -130,13 +143,7 @@ Then build from the repo root (note the explicit `.\` path for `-f`, which the W
 monkeyc -f .\src\project.jungle -d edge1050 -y %USERPROFILE%\.Garmin\ConnectIQ\developer_key.der -o build\AXS-Counter-edge1050.prg -w
 ```
 
-Sideload the resulting `.prg` to the matching Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
-
-## Release
-
-Releases are manual (no CI): one `.prg` per supported device, attached to a [GitHub release](../../releases). The build-and-release steps live in [AGENTS.md](AGENTS.md#release).
-
-A single `.prg` cannot be shared across devices: Garmin sideloads must be built for the exact device, so the release carries one file per model. (A future Connect IQ Store submission would instead be a single `.iq` export containing all device builds.)
+Sideload the resulting `.prg` to your Edge (USB → `Garmin/Apps`), then put the **Counter** field on a data page.
 
 ## How it works
 
