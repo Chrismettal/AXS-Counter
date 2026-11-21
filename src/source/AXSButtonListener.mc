@@ -86,8 +86,6 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
         _incrementBinding = Properties.getValue($.PROP_INCREMENT) as Number;
         _decrementBinding = Properties.getValue($.PROP_DECREMENT) as Number;
         _resetBinding = Properties.getValue($.PROP_RESET) as Number;
-        System.println("AXSButton: bindings inc=" + _incrementBinding +
-                       " dec=" + _decrementBinding + " rst=" + _resetBinding);
     }
 
     //! Called by the app when the user changes the settings from the phone.
@@ -145,8 +143,6 @@ class AXSButtonListener extends AntPlus.ShiftingListener {
             return;
         }
         var binding = functionSet + (longPress ? LONG_PRESS_OFFSET : 0);
-        System.println("AXSButton: fn=" + functionSet + " long=" + longPress +
-                       " binding=" + binding);
         if (binding == _incrementBinding) {
             _field.applyDelta(1);
         } else if (binding == _decrementBinding) {

@@ -1,7 +1,6 @@
 import Toybox.AntPlus;
 import Toybox.Application;
 import Toybox.Lang;
-import Toybox.System;
 import Toybox.WatchUi;
 
 //! App entry point for the AXS-Counter bonus-button counter data field.
@@ -31,7 +30,6 @@ class AXSCounterApp extends Application.AppBase {
         _listener = new AXSButtonListener(_field);
         _field.setListener(_listener);
         _shifting = new AntPlus.Shifting(_listener);
-        System.println("AXSCounterApp: shifting listener attached");
     }
 
     //! Handle app shutdown: detach the listener and release the device.

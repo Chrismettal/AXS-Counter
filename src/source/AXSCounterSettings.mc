@@ -1,6 +1,5 @@
 import Toybox.Application;
 import Toybox.Lang;
-import Toybox.System;
 import Toybox.WatchUi;
 
 //! On-device settings for the AXS-Counter data field.
@@ -164,7 +163,6 @@ class AXSCounterBindingMenuDelegate extends WatchUi.Menu2InputDelegate {
         var value = item.getId() as Number;
         var key = $.propertyKeyFor(_actionId);
         Properties.setValue(key, value);
-        System.println("AXSButton: setting " + key + " = " + value);
         if (_listener != null) {
             _listener.onSettingsChanged();
         }
