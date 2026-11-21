@@ -23,6 +23,7 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
     - [Garmin Ant function 2](#garmin-ant-function-2)
     - [Garmin Ant function 3](#garmin-ant-function-3)
 - [Build](#build)
+- [Release](#release)
 - [How it works](#how-it-works)
 - [AI Usage](#ai-usage)
 - [Donations](#donations)
@@ -38,11 +39,23 @@ Each of the three actions — **Increment**, **Decrement** and **Reset** — can
 
 ### Sideloading
 
-Grab the latest release's `AXS-Counter.prg` file and place it into your Edge's `/Garmin/Apps` directory via USB.
+1. Download the `.prg` matching your device from the [latest release](../../releases). There is one file per device (Garmin requires sideloads to be built for the exact device):
 
-After unplugging the USB, the Edge will install the app and prompt you to use it.
+   | Device | File |
+   |---|---|
+   | Edge 540 | `AXS-Counter-edge540.prg` |
+   | Edge 550 | `AXS-Counter-edge550.prg` |
+   | Edge 840 | `AXS-Counter-edge840.prg` |
+   | Edge 850 | `AXS-Counter-edge850.prg` |
+   | Edge 1040 | `AXS-Counter-edge1040.prg` |
+   | Edge 1050 | `AXS-Counter-edge1050.prg` |
+   | Edge 1060 | `AXS-Counter-edge1060.prg` |
 
-You'll find the datafield in the "ConnectIQ" category
+2. Connect the Edge to your computer via USB and copy the file into the `Garmin/Apps` directory.
+
+3. Unplug the USB. The Edge will install the app and prompt you to use it.
+
+You'll find the datafield in the "ConnectIQ" category.
 
 ### ConnectIQ Store
 
@@ -92,11 +105,25 @@ You could also double bind between the Edge and this datafield if you wanted to.
 
 ## Build
 
+Builds are done per device (one `.prg` per target; this is also how the release is packaged):
+
 ```
-monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o _gitignored/Builds/AXS-Counter.prg -w
+monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o _gitignored/Builds/AXS-Counter-edge1050.prg -w
 ```
 
-Sideload the resulting `.prg` to the Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
+Replace `edge1050` with any of the supported device ids: `edge540`, `edge550`, `edge840`, `edge850`, `edge1040`, `edge1050`, `edge1060`.
+
+Sideload the resulting `.prg` to the matching Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
+
+## Release
+
+Releases are manual (no CI): build one `.prg` per supported device and attach all of them to a [GitHub release](../../releases).
+
+1. Build every target from the list above into `_gitignored/Builds/`, naming the output `AXS-Counter-<device>.prg`.
+2. Create the release with `gh release create vX.Y.Z` and attach the `.prg` files.
+3. Update the [Sideloading](#sideloading) table if the device list changes.
+
+A single `.prg` cannot be shared across devices: Garmin sideloads must be built for the exact device, so the release carries one file per model. (A future Connect IQ Store submission would instead be a single `.iq` export containing all device builds.)
 
 
 ## How it works
