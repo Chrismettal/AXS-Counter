@@ -83,7 +83,7 @@ This means you want to leave the buttons you want to use for this counter unassi
 
 In this example configuration I use short press on both buttons to increment, with no option to decrement or reset.
 
-The Edge itself listents to left and right short presses for page swapping and holding of both for bell ringing.
+The Edge itself listens to left and right short presses for page swapping and holding of both for bell ringing.
 
 You could also double bind between the Edge and this datafield if you wanted to.
 
