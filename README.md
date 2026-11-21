@@ -94,15 +94,15 @@ You could also double bind between the Edge and this datafield if you wanted to.
 
 #### Garmin Ant function 1
 
-![ANT1](/img/Function1.BMP)
+![ANT1](/img/Function1.png)
 
 #### Garmin Ant function 2
 
-![ANT2](/img/Function2.BMP)
+![ANT2](/img/Function2.png)
 
 #### Garmin Ant function 3
 
-![ANT3](/img/Function3.BMP)
+![ANT3](/img/Function3.png)
 
 ## Build
 
