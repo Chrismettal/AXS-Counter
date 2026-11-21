@@ -33,23 +33,23 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 
 A big number on a data page that changes when you press the SRAM bonus buttons. A dot in the corner shows the ANT+ link: **green** while the shifter is broadcasting, **red** when no frames are arriving (SRAM asleep, out of range, or channel lost).
 
-Each of the three actions — **Increment**, **Decrement** and **Reset** — can be bound to any of the bonus-button combinations (ANT+ Function Set 1–8 × short/long press), or left unassigned. Defaults: Increment = **FS 3 · short press** (both buttons), Decrement and Reset unassigned. No persistence — the counter resets to 0 when the field is restarted.
+Each of the three actions - **Increment**, **Decrement** and **Reset** - can be bound to any of the bonus-button combinations (ANT+ Function Set 1–8 × short/long press), or left unassigned. Defaults: Increment = **FS 3 · short press** (both buttons), Decrement and Reset unassigned.
 
 ## Installation
 
 ### Sideloading
 
-1. Download the `.prg` matching your device from the [latest release](../../releases). There is one file per device (Garmin requires sideloads to be built for the exact device):
+1. Download the `.prg` matching your device from the latest release. There is one file per device (Garmin requires sideloads to be built for the exact device):
 
-   | Device | File |
-   |---|---|
-   | Edge 540 | `AXS-Counter-edge540.prg` |
-   | Edge 550 | `AXS-Counter-edge550.prg` |
-   | Edge 840 | `AXS-Counter-edge840.prg` |
-   | Edge 850 | `AXS-Counter-edge850.prg` |
-   | Edge 1040 | `AXS-Counter-edge1040.prg` |
-   | Edge 1050 | `AXS-Counter-edge1050.prg` |
-   | Edge 1060 | `AXS-Counter-edge1060.prg` |
+| Device    | File                       |
+| --------- | -------------------------- |
+| Edge 540  | `AXS-Counter-edge540.prg`  |
+| Edge 550  | `AXS-Counter-edge550.prg`  |
+| Edge 840  | `AXS-Counter-edge840.prg`  |
+| Edge 850  | `AXS-Counter-edge850.prg`  |
+| Edge 1040 | `AXS-Counter-edge1040.prg` |
+| Edge 1050 | `AXS-Counter-edge1050.prg` |
+| Edge 1060 | `AXS-Counter-edge1060.prg` |
 
 2. Connect the Edge to your computer via USB and copy the file into the `Garmin/Apps` directory.
 
@@ -65,11 +65,11 @@ Not yet available
 
 Each of the three actions can be bound to one button combination, or left *Unassigned*:
 
-| Setting | Action |
-|---|---|
+| Setting       | Action                                   |
+| ------------- | ---------------------------------------- |
 | **Increment** | counter +1 (default: FS 3 · short press) |
-| **Decrement** | counter −1 (default: Unassigned) |
-| **Reset** | counter → 0 (default: Unassigned) |
+| **Decrement** | counter −1 (default: Unassigned)         |
+| **Reset**     | counter → 0 (default: Unassigned)        |
 
 FS1 - FS16 correlate to the 16 ANT actions SRAM can send us. Along with that each ANT action can be either long or short press.
 
@@ -125,7 +125,6 @@ Releases are manual (no CI): build one `.prg` per supported device and attach al
 
 A single `.prg` cannot be shared across devices: Garmin sideloads must be built for the exact device, so the release carries one file per model. (A future Connect IQ Store submission would instead be a single `.iq` export containing all device builds.)
 
-
 ## How it works
 
 The bonus buttons are exposed by SRAM as ANT+ *function sets* on the **Shifting profile (device type 0x22)**. The shifter broadcasts a **data page 2** frame about once per second while it is awake:
@@ -145,7 +144,6 @@ Requirements:
 
 - The Edge is already paired to the SRAM on its built-in shifting channel.
 - The SRAM is awake and the bonus buttons are mapped to ANT+ Function Sets in the SRAM AXS app (SRAM currently exposes FS 1–3; the settings allow binding any FS 1–8).
-
 
 ## AI Usage
 
