@@ -43,4 +43,4 @@ Releases are manual (no CI). One `.prg` per device, attached to a GitHub release
 
 ## Conventions
 
-- Do not touch `master`; work on a feature branch and let the user merge.
+- Work directly on `master`; commit small, focused changes.
