@@ -43,5 +43,4 @@ Releases are manual (no CI). One `.prg` per device, attached to a GitHub release
 
 ## Conventions
 
-- Never leave debug logging (`System.println`) in the code — the app is published.
 - Do not touch `master`; work on a feature branch and let the user merge.
