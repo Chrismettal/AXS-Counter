@@ -17,11 +17,20 @@ class AXSCounterField extends WatchUi.DataField {
     //! Inset of the dot from the top/right edges of the field.
     private const DOT_PAD = 6;
     private const LABEL_STRING = "COUNTER";
-    //! Top padding of the label, matching the native data fields (the
-    //! "GRADE" label sits 22 px below the top of its 158 px cell).
-    private const LABEL_TOP_PAD = 22;
-    //! Cap height of the custom label font (Roboto Regular, em 31).
-    private const LABEL_CAP = 22;
+    //! Label font: the device's built-in text face at FONT_TINY. On the
+    //! Edge 1050 this is "DejaVu Sans Medium Condensed" (SemiBold), em 28
+    //! -> cap 22 px — the exact font and size the native data-field labels
+    //! (e.g. "GRADE") are drawn in, so the label now matches natively with
+    //! no bundled font file.
+    private const LABEL_FONT = Graphics.FONT_TINY;
+    //! Top padding of the label. The built-in font's cap ink starts ~5 px
+    //! below its line-box top, so y = 17 lands the cap ink at row 22, the
+    //! same row the native "GRADE" label starts on. May need a +/-1 px
+    //! on-device tweak.
+    private const LABEL_TOP_PAD = 17;
+    //! Line-box height of LABEL_FONT (ascent 26 + descent 7), used to center
+    //! the number below the label.
+    private const LABEL_LINE_H = 33;
     private const NUMBER_FONT = Graphics.FONT_NUMBER_HOT;
     //! FIT developer-data field ids; must match the fitField ids in the
     //! <fitContributions> block of strings.xml.
@@ -33,9 +42,6 @@ class AXSCounterField extends WatchUi.DataField {
     private var _counter as Number = 0;
     private var _connected as Boolean = false;
     private var _listener as AXSButtonListener?;
-    //! Custom bitmap font for the label (Roboto Regular, cap 22 px),
-    //! matched to the native data-field labels.
-    private var _labelFont as FontResource?;
     //! FIT developer-data fields: the counter timeline (record messages →
     //! chart) and the final counter value (session message → summary).
     private var _recordField as FitContributor.Field;
@@ -47,7 +53,6 @@ class AXSCounterField extends WatchUi.DataField {
         _counter = 0;
         _connected = false;
         _listener = null;
-        _labelFont = WatchUi.loadResource($.Rez.Fonts.id_font_label) as FontResource;
         // Create the FIT developer-data fields. The framework ties them to
         // the active recording session; values are only written while an
         // activity records.
@@ -121,19 +126,15 @@ class AXSCounterField extends WatchUi.DataField {
         var width = dc.getWidth();
         var height = dc.getHeight();
 
-        // Field label: all caps, custom Roboto bitmap font (cap 22 px),
-        // with the same top padding as the native labels.
-        if (_labelFont != null) {
-            dc.drawText(width / 2, LABEL_TOP_PAD, _labelFont, LABEL_STRING,
-                        Graphics.TEXT_JUSTIFY_CENTER);
-        } else {
-            dc.drawText(width / 2, LABEL_TOP_PAD, Graphics.FONT_TINY, LABEL_STRING,
-                        Graphics.TEXT_JUSTIFY_CENTER);
-        }
+        // Field label: all caps in the device's built-in text face
+        // (FONT_TINY = DejaVu Sans Medium Condensed SemiBold, cap 22 px),
+        // the same font and size as the native data-field labels.
+        dc.drawText(width / 2, LABEL_TOP_PAD, LABEL_FONT, LABEL_STRING,
+                    Graphics.TEXT_JUSTIFY_CENTER);
 
         // Big counter, vertically centered below the label.
         var numberText = _counter.toString();
-        var numberY = (LABEL_TOP_PAD + LABEL_CAP + height) / 2;
+        var numberY = (LABEL_TOP_PAD + LABEL_LINE_H + height) / 2;
         dc.drawText(width / 2, numberY, NUMBER_FONT, numberText,
                     Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 
