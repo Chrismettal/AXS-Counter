@@ -10,6 +10,8 @@ Used like these clicker counters to count arbitrary numbers during cycling. (How
 
 **If you like my work please consider [supporting me](https://github.com/Chrismettal#donations)!**
 
+![AXS-Counter on a Garmin Edge](/img/Edge-Counter.jpg)
+
 ## Table of contents <!-- omit in toc -->
 
 - [Concept](#concept)
