@@ -105,23 +105,36 @@ You could also double bind between the Edge and this datafield if you wanted to.
 
 ## Build
 
-Builds are done per device (one `.prg` per target; this is also how the release is packaged):
+Builds are done per device (one `.prg` per target; this is also how the release is packaged). Output goes to `build/`.
+
+### Linux
 
 ```
-monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o _gitignored/Builds/AXS-Counter-edge1050.prg -w
+monkeyc -f src/project.jungle -d edge1050 -y ~/.Garmin/ConnectIQ/developer_key.der -o build/AXS-Counter-edge1050.prg -w
 ```
 
 Replace `edge1050` with any of the supported device ids: `edge540`, `edge550`, `edge840`, `edge850`, `edge1040`, `edge1050`, `edge1060`.
+
+### Windows
+
+`monkeyc` is a `.bat` wrapper (there is no `monkeyc.exe`). Point `PATH` at the active SDK's `bin` directory first (repeat per new terminal, or set it persistently):
+
+```
+for /f usebackq %i in (%APPDATA%\Garmin\ConnectIQ\current-sdk.cfg) do set CIQ_HOME=%~pi
+set PATH=%PATH%;%CIQ_HOME%\bin
+```
+
+Then build from the repo root (note the explicit `.\` path for `-f`, which the Windows compiler requires):
+
+```
+monkeyc -f .\src\project.jungle -d edge1050 -y %USERPROFILE%\.Garmin\ConnectIQ\developer_key.der -o build\AXS-Counter-edge1050.prg -w
+```
 
 Sideload the resulting `.prg` to the matching Edge (MTP → `Garmin/Apps`), then put the **Counter** field on a data page.
 
 ## Release
 
-Releases are manual (no CI): build one `.prg` per supported device and attach all of them to a [GitHub release](../../releases).
-
-1. Build every target from the list above into `_gitignored/Builds/`, naming the output `AXS-Counter-<device>.prg`.
-2. Create the release with `gh release create vX.Y.Z` and attach the `.prg` files.
-3. Update the [Sideloading](#sideloading) table if the device list changes.
+Releases are manual (no CI): one `.prg` per supported device, attached to a [GitHub release](../../releases). The build-and-release steps live in [AGENTS.md](AGENTS.md#release).
 
 A single `.prg` cannot be shared across devices: Garmin sideloads must be built for the exact device, so the release carries one file per model. (A future Connect IQ Store submission would instead be a single `.iq` export containing all device builds.)
 

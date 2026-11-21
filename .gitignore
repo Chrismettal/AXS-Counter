@@ -1,5 +1,6 @@
 # Default
 _gitignored/*
+/build
  
 # office lock files
 .~lock*
